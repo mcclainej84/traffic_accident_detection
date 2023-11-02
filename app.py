@@ -1,71 +1,82 @@
 import streamlit as st
+import base64
 import maps
+import ml
+import eda
+import file_aux
 
-
+##################################################################################################
+#Constants Declaration
+##################################################################################################
 st.set_page_config(page_title = "Detección de Accidentes en Madrid", page_icon=":🚦:" )
-st.sidebar.info("Menú Contextual")
-
-
+st.sidebar.info("Menú de opciones")
 font="sans serif"
 
+PAGE_HOME = "🚘 HOME"
+PAGE_EDA = "📊 Análisis Gráfico"
+PAGE_MAPS = "🌎 Visualización con Mapas"
+PAGE_ML = "🤖 Predicción con níveles de lesividad"
+PAGE_SELECT=[PAGE_HOME,PAGE_EDA ,PAGE_MAPS, PAGE_ML ]
 
-PAGE_HOME = "🚘 Introducción"
-PAGE_EDA = "📊 Analísis Exploratorio"
-PAGE_MAPS = "🌎 Mapas y cuadro de mando"
-PAGE_ML = "🤖 Sección de ML"
-PAGE_INFO = "ℹ️ Información adicional"
-PAGE_SELECT=[PAGE_HOME,PAGE_EDA ,PAGE_MAPS, PAGE_ML , PAGE_INFO]
+IMG_HEADER ='TrafficBW.jpeg'
+IMG_PORTADA= "accidente_portada.jpg"
 
+##################################################################################################
+#Main program to activate the App and the sidebar menu
+##################################################################################################
 def main():
 	#page selector
-	ps = st.sidebar.selectbox("",(PAGE_SELECT))
+	ps = st.sidebar.selectbox("Seleccióne una opcion",(PAGE_SELECT))
 
 	if ps== PAGE_HOME:
 		home_app()
 	elif ps == PAGE_EDA:
-		eda_app()
-	elif ps == PAGE_INFO:
-		info()
+		eda.run_eda_app()
 	elif ps == PAGE_ML:
-		ml_app()
+		ml.run_mlapp()
 	else:
 		maps.run_maps_app()
 
-
+#########################################################
+#################		HOMEPAGE		#################
+#########################################################
 def home_app():
-    st.write('Esta página consistirá de una portada. Se mostrarán un par de fotos chulas y se explicará el contexto del proyecto. No habrá necesidad de código, sólo texto plano')
+	try:
+		st.image(file_aux.get_image(IMG_PORTADA), use_column_width=True)
+	except:
+		st.empty()
 
-def eda_app():
-    st.write('Esta página consistira de una serie de datos explorarios sobre el dataset final.')
-    st.write('Se pueden añadir gráficas para mostrar las distribuciones más comunes de los principales valores ( por ejempplo sexo,etc )')
+	st.write('A día de hoy, el numero de vehículos asegurados en España se situó en 33.231.237 en el segundo semestre de 2023 según Unespa, Unión Española de Entidades Aseguradoras y Reaseguradoras.')
+	st.write('En el año 2022, se registraron 1.042 accidentes mortales en las carreteras de España, con un saldo de 1.145 personas fallecidas y 4.008 personas heridas de gravedad. Estas estadísticas reflejan un aumento de 44 víctimas fatales (+4 %) en comparación con el año 2019, que sirve como punto de referencia antes de la pandemia, aunque se registró una disminución de 425 heridos graves (-10 %) en ese mismo período.')
+	st.write('En los primeros siete meses del año 2023, 620 personas han fallecido en siniestros de tráfico.')
+	st.write('Este proyecto se basa en el análisis de accidentes de transito de la comunidad de Madrid.')
 
-def info():
-    st.write('En esta página se puede mostrar información sobre el proyecto, las personas que han participado, herramientas utilizadas, links, etc...')
-
-def maps_app():
-    st.write('En esta pagina crearemos un cuadro de mando con los mapas y la información distribuida por sectores, pudiendo elegir distritos, etc y que la información filtre en función de la información')
-
-def ml_app():
-    st.write('En esta página se cargará el modelo de ML y permitirá realizar predicciones en base a los datos seleccionados')
-
+#########################################################
+#################		APP HEADER 		#################
+#########################################################
 def header():
+	try:
+		encoded_image = file_aux.get_image(IMG_HEADER)
+		# Encode the image data as base64
+		encoded_image = base64.b64encode(encoded_image).decode('utf-8')
+	except:
+		encoded_image = None
 
-	html = f'''
-		<div style="background-image: url('https://github.com/mcclainej84/traffic_accident_detection/blob/main/TrafficBW.jpeg?raw=true'); background-size: 100% 100%; border-radius: 30px; padding: 10px; text-align: center; color: orange;">
-		<h1 style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: bold; font-size: 55px; 
+	html = f"""
+		<div style="background-image: url(data:image/jpeg;base64,{encoded_image}); background-size: 100% 100%; border-radius: 30px; padding: 10px; text-align: center; color: orange;">
+		<h1 style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: bold; font-size: 55px;
 					-webkit-text-stroke: 2px black; color:orange;
 					text-stroke: 23px black;">
 			Detección de Accidentes
 		</h1>
-		<p style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;font-weight: bold;font-size: 36px;-webkit-text-stroke: 2px black; 
+		<p style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;font-weight: bold;font-size: 36px;-webkit-text-stroke: 2px black;
 					text-stroke: 2px black;">Ciudad de Madrid</p>
 	</div>
-	'''
-
+	"""
 	st.markdown(html, unsafe_allow_html=True)
 
 if __name__ == '__main__':
 	header()
-	st.text("")
-	st.text("")
+	st.write("")
+	st.write("")
 	main()
