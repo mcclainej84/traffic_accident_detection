@@ -94,7 +94,7 @@ def graph_sexo(Accidentes):
 
 def graph_top15(Accidentes):
     # Graficos distritos con mayor cantidad de accidentes
-    Accidentes.drop_duplicates(
+    top15_accidentes = Accidentes.drop_duplicates(
         subset='num_expediente').groupby('road_name_speed_api').size().nlargest(15)
     df_top15_accidentes = pd.DataFrame(top15_accidentes, columns=['Cantidad de Accidentes'])
     fig = px.bar(df_top15_accidentes, x=df_top15_accidentes.index, y='Cantidad de Accidentes',
